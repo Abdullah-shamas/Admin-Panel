@@ -5,51 +5,36 @@ import { Product } from "@/lib/schema";
 const INITIAL_PRODUCTS: Product[] = [
   {
     id: "prod-1",
-    name: "MacBook Pro M3 Max",
+    name: "Noise-Cancelling Studio Headphones",
     category: "Electronics",
-    description: "High-performance laptop for developers and creatives.",
-    sku: "LAP-MAC-001",
-    price: 2499.0,
-    costPrice: 1900.0,
-    discount: 5,
-    taxRate: 8,
-    images: ["https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80"],
+    description: "High-fidelity wireless sound with adaptive ANC.",
+    sku: "AUD-HD-002",
+    price: 349.99,
+    costPrice: 210,
+    taxRate: 5,
+    discount: 10,
+    images: ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80"],
     status: "ACTIVE",
-    createdAt: new Date().toISOString(),
   },
   {
     id: "prod-2",
-    name: "Noise-Cancelling Studio Headphones",
-    category: "Electronics",
-    description: "Premium over-ear wireless audio with active noise cancellation.",
-    sku: "AUD-HD-002",
-    price: 349.99,
-    costPrice: 180.0,
-    discount: 10,
-    taxRate: 5,
-    images: ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80"],
-    status: "ACTIVE",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "prod-3",
     name: "Minimalist Leather Backpack",
     category: "Accessories",
-    description: "Handcrafted water-resistant leather backpack with laptop sleeve.",
+    description: "Full-grain waterproof travel backpack.",
     sku: "BAG-LTH-003",
     price: 129.5,
-    costPrice: 65.0,
+    costPrice: 65,
+    taxRate: 8,
     discount: 0,
-    taxRate: 5,
     images: ["https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80"],
     status: "DRAFT",
-    createdAt: new Date().toISOString(),
   },
 ];
 
-interface ProductState {
+export interface ProductState {
   products: Product[];
   addProduct: (product: Product) => void;
+  updateProduct: (id: string, updated: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
   toggleStatus: (id: string) => void;
 }
@@ -63,11 +48,16 @@ export const useProductStore = create<ProductState>()(
           products: [
             {
               ...product,
-              id: `prod-${Date.now()}`,
-              createdAt: new Date().toISOString(),
+              id: product.id || "prod-" + Math.floor(1000 + Math.random() * 9000),
             },
             ...state.products,
           ],
+        })),
+      updateProduct: (id, updated) =>
+        set((state) => ({
+          products: state.products.map((p) =>
+            p.id === id ? { ...p, ...updated } : p
+          ),
         })),
       deleteProduct: (id) =>
         set((state) => ({
@@ -83,7 +73,7 @@ export const useProductStore = create<ProductState>()(
         })),
     }),
     {
-      name: "nexus-admin-products",
+      name: "nexus-product-storage",
     }
   )
 );
